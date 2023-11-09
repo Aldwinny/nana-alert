@@ -56,23 +56,28 @@ class _SettingsOverlayState extends State<SettingsOverlay> {
             ]),
           ),
           const Divider(),
-          const SettingListTile(
+          SettingListTile(
+            onTap: () => {},
             icon: Icon(Icons.account_circle_outlined),
             label: "Login / Register",
           ),
-          const SettingListTile(
+          SettingListTile(
+            onTap: () => {},
             icon: Icon(Icons.account_circle),
             label: "Edit Personal Information",
           ),
-          const SettingListTile(
+          SettingListTile(
+            onTap: () => {},
             icon: Icon(Icons.remove_circle_outline_sharp),
             label: "Reset Planner",
           ),
-          const SettingListTile(
+          SettingListTile(
+            onTap: () => {},
             icon: Icon(Icons.cabin_rounded),
             label: "About the Developer",
           ),
-          const SettingListTile(
+          SettingListTile(
+            onTap: () => {},
             icon: Icon(Icons.power_settings_new),
             label: "Logout",
           )

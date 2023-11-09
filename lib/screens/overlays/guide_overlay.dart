@@ -47,7 +47,7 @@ class _GuideOverlayState extends State<GuideOverlay> {
               padding:
                   const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   GuideRowButton(
                     "Milk Tips",
