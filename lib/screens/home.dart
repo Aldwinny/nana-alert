@@ -69,6 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     // The to be constructed appbar
     AppBar appBar = AppBar(
+      automaticallyImplyLeading: false,
       backgroundColor: topDownColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(

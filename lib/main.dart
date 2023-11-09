@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:nana_alert/shared/provider/settings_data.dart';
 import 'package:nana_alert/shared/provider/user_data.dart';
@@ -9,10 +11,19 @@ import 'package:nana_alert/screens/home.dart';
 import 'package:nana_alert/screens/others/about.dart';
 import 'package:nana_alert/screens/splash.dart';
 
-void main() {
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  runApp(const MyApp());
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform)
+      .whenComplete(() async {
+    if (kIsWeb) {
+      await FirebaseAuth.instance.setPersistence(Persistence.LOCAL);
+    }
+    runApp(const MyApp());
+  });
 }
 
 class MyApp extends StatefulWidget {

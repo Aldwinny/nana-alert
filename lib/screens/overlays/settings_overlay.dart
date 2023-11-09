@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nana_alert/screens/auth/login.dart';
 import 'package:nana_alert/shared/provider/settings_data.dart';
 import 'package:provider/provider.dart';
 
@@ -26,62 +27,66 @@ class _SettingsOverlayState extends State<SettingsOverlay> {
   Widget build(BuildContext context) {
     _isEmergencyCentered =
         Provider.of<SettingsData>(context).isEmergencyCentered;
-    return SizedBox(
-      width: MediaQuery.sizeOf(context).width,
-      child: Column(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: CircleAvatar(
-              radius: 70,
-              backgroundImage: Image.network(
-                'https://i.pinimg.com/564x/56/c1/3d/56c13d61eb73d60d21cbb90784fdf9e7.jpg',
-              ).image,
+    return SingleChildScrollView(
+      child: SizedBox(
+        width: MediaQuery.sizeOf(context).width,
+        child: Column(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: CircleAvatar(
+                radius: 70,
+                backgroundImage: Image.network(
+                  'https://i.pinimg.com/564x/56/c1/3d/56c13d61eb73d60d21cbb90784fdf9e7.jpg',
+                ).image,
+              ),
             ),
-          ),
-          const Padding(
-            padding: EdgeInsets.only(bottom: 20.0),
-            child: Text('Hi!'),
-          ),
-          const Divider(),
-          SettingListTile(
-            title: Row(children: <Widget>[
-              const Expanded(child: Text("Center Emergency Button")),
-              Switch(
-                onChanged: (v) {
-                  toggleIsEmergencyCentered();
-                },
-                value: _isEmergencyCentered,
-              )
-            ]),
-          ),
-          const Divider(),
-          SettingListTile(
-            onTap: () => {},
-            icon: Icon(Icons.account_circle_outlined),
-            label: "Login / Register",
-          ),
-          SettingListTile(
-            onTap: () => {},
-            icon: Icon(Icons.account_circle),
-            label: "Edit Personal Information",
-          ),
-          SettingListTile(
-            onTap: () => {},
-            icon: Icon(Icons.remove_circle_outline_sharp),
-            label: "Reset Planner",
-          ),
-          SettingListTile(
-            onTap: () => {},
-            icon: Icon(Icons.cabin_rounded),
-            label: "About the Developer",
-          ),
-          SettingListTile(
-            onTap: () => {},
-            icon: Icon(Icons.power_settings_new),
-            label: "Logout",
-          )
-        ],
+            const Padding(
+              padding: EdgeInsets.only(bottom: 20.0),
+              child: Text('Hi!'),
+            ),
+            const Divider(),
+            SettingListTile(
+              title: Row(children: <Widget>[
+                const Expanded(child: Text("Center Emergency Button")),
+                Switch(
+                  onChanged: (v) {
+                    toggleIsEmergencyCentered();
+                  },
+                  value: _isEmergencyCentered,
+                )
+              ]),
+            ),
+            const Divider(),
+            SettingListTile(
+              onTap: () {
+                Navigator.pushNamed(context, LoginScreen.routeName);
+              },
+              icon: const Icon(Icons.account_circle_outlined),
+              label: "Login / Register",
+            ),
+            SettingListTile(
+              onTap: () => {},
+              icon: const Icon(Icons.account_circle),
+              label: "Edit Personal Information",
+            ),
+            SettingListTile(
+              onTap: () => {},
+              icon: const Icon(Icons.remove_circle_outline_sharp),
+              label: "Reset Planner",
+            ),
+            SettingListTile(
+              onTap: () => {},
+              icon: const Icon(Icons.cabin_rounded),
+              label: "About the Developer",
+            ),
+            SettingListTile(
+              onTap: () => {},
+              icon: const Icon(Icons.power_settings_new),
+              label: "Logout",
+            )
+          ],
+        ),
       ),
     );
   }
