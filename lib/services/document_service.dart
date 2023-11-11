@@ -64,6 +64,27 @@ class DocumentService {
     return jsonData;
   }
 
+  Future<List<Map<String, dynamic>>> getTasks(String uid) async {
+    CollectionReference collectionReference =
+        FirebaseFirestore.instance.collection(tasksCollection);
+
+    final qs = await collectionReference.where('uid', isEqualTo: uid).get();
+
+    List<Map<String, dynamic>> obj = [];
+
+    for (var snapshot in qs.docs) {
+      if (snapshot.exists) {
+        Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+        data.addAll({"id": snapshot.id});
+        obj.add(data);
+      }
+    }
+
+    print(obj);
+
+    return obj;
+  }
+
   Future<void> publishTaskToFirestore(String uid, TaskCard task) async {
     CollectionReference collectionReference =
         FirebaseFirestore.instance.collection(tasksCollection);
@@ -76,5 +97,9 @@ class DocumentService {
 
   Future<void> removeTaskFromFirestore(String did) async {
     // Use the document ID to remove the data from the database
+    CollectionReference collectionReference =
+        FirebaseFirestore.instance.collection(tasksCollection);
+
+    await collectionReference.doc(did).delete();
   }
 }

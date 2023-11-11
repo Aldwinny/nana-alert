@@ -43,7 +43,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
         ),
-        actions: <Widget>[],
+        actions: const <Widget>[],
       ),
       backgroundColor: Colors.deepPurple[50],
       body: SingleChildScrollView(

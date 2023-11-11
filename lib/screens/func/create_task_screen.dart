@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:nana_alert/models/task_card.dart';
+import 'package:nana_alert/services/document_service.dart';
 
 class CreateTaskScreen extends StatefulWidget {
   const CreateTaskScreen({super.key});
@@ -23,6 +25,8 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final whenCompleteCallback =
+        ModalRoute.of(context)!.settings.arguments as void Function();
     return Scaffold(
         appBar: AppBar(
           title: Text(
@@ -38,7 +42,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
         ),
         backgroundColor: Colors.deepPurple[50],
         body: Container(
-          padding: EdgeInsets.all(20.0),
+          padding: const EdgeInsets.all(20.0),
           width: MediaQuery.sizeOf(context).width,
           child: SingleChildScrollView(
               child: Form(
@@ -46,7 +50,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                SizedBox(
+                const SizedBox(
                   height: 30,
                 ),
                 DropdownMenu(
@@ -60,13 +64,13 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                       DropdownMenuEntry(value: 'Sunday', label: 'Sunday'),
                     ],
                     controller: _dayController,
-                    label: Text("Select the day for this plan")),
+                    label: const Text("Select the day for this plan")),
                 TextFormField(
                   controller: _titleController,
                   decoration: const InputDecoration(labelText: "Title"),
                   validator: (value) {
                     if (value == null || value.isEmpty || value.length > 20) {
-                      return "Please enter your title";
+                      return "Please enter a valid short title";
                     } else {
                       return null;
                     }
@@ -78,8 +82,8 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                     labelText: "Description",
                   ),
                   validator: (value) {
-                    if (value == null || value.isEmpty || value.length > 20) {
-                      return "Please enter your description";
+                    if (value == null || value.isEmpty || value.length > 100) {
+                      return "Please enter a valid short description.";
                     } else {
                       return null;
                     }
@@ -97,15 +101,45 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                         }
 
                         User? user = FirebaseAuth.instance.currentUser;
+                        TaskCard task = TaskCard(
+                            _titleController.text,
+                            _descriptionController.text,
+                            _dayController.text,
+                            false);
 
                         if (user == null) {
                           return Navigator.popUntil(
                               context, (route) => route.isFirst);
-                        } else {}
+                        } else {
+                          // Publish task
+                          await DocumentService()
+                              .publishTaskToFirestore(user.uid, task)
+                              .whenComplete(() {
+                            if (context.mounted) {
+                              SnackBar sb = SnackBar(
+                                duration: const Duration(seconds: 1),
+                                content: WillPopScope(
+                                  child: const Text("Successfully Added!"),
+                                  onWillPop: () async {
+                                    ScaffoldMessenger.of(context)
+                                        .removeCurrentSnackBar();
 
-                        // If valid, submit to Firebase Firestore
+                                    return true;
+                                  },
+                                ),
+                              );
 
-                        // Call the callback then pop
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(sb)
+                                  .closed
+                                  .then((reason) {
+                                whenCompleteCallback();
+                                Navigator.popUntil(
+                                    context, (route) => route.isFirst);
+                              });
+                            }
+                          });
+                        }
                       }
                     },
                     child: Ink(
@@ -122,7 +156,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 8.0),
                             child: Icon(
-                              Icons.person,
+                              Icons.add,
                               color: Colors.deepPurple[50],
                             ),
                           ),
@@ -130,7 +164,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                             padding:
                                 const EdgeInsets.only(right: 10.0, left: 5.0),
                             child: Text(
-                              'Login',
+                              'Add Plan',
                               style: formButtonTextStyle.copyWith(
                                   color: Colors.deepPurple[50]),
                             ),
