@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:nana_alert/screens/auth/register.dart';
@@ -15,6 +16,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   final formButtonTextStyle =
       const TextStyle(fontFamily: "Poppins", fontSize: 15);
@@ -24,7 +27,16 @@ class _LoginScreenState extends State<LoginScreen> {
   );
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final loginCallback =
+        ModalRoute.of(context)!.settings.arguments as void Function();
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -54,9 +66,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 TextFormField(
+                  controller: _emailController,
                   validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Please enter your email";
+                    if (value == null ||
+                        value.isEmpty ||
+                        !Helper.isValidEmail(value)) {
+                      return "Please a valid email";
                     } else {
                       return null;
                     }
@@ -64,9 +79,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   decoration: const InputDecoration(labelText: "Email"),
                 ),
                 TextFormField(
+                  controller: _passwordController,
                   validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Please enter your password";
+                    if (value == null ||
+                        value.isEmpty ||
+                        !Helper.isValidPassword(value)) {
+                      return "Please enter a valid password";
                     } else {
                       return null;
                     }
@@ -79,13 +97,62 @@ class _LoginScreenState extends State<LoginScreen> {
                 Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: InkWell(
-                    onTap: () {
+                    onTap: () async {
                       if (_formKey.currentState!.validate()) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Processing Data'),
-                          ),
-                        );
+                        String content;
+                        bool isSuccessful = false;
+
+                        try {
+                          UserCredential? userCredential = await AuthService()
+                              .signInWithEmail(_emailController.text,
+                                  _passwordController.text);
+
+                          print(userCredential);
+                          content = "Success!";
+                          isSuccessful = true;
+                        } on FirebaseAuthException catch (error) {
+                          switch (error.code) {
+                            case "INVALID_LOGIN_CREDENTIALS":
+                              content = "Invalid Login Credentials.";
+                              break;
+                            default:
+                              content = "An unknown error has occurred";
+                          }
+                        } catch (e) {
+                          print('GENERIC_ERROR: $e');
+                          content = "An unknown error has occurred";
+                        }
+                        if (context.mounted) {
+                          SnackBar sb = SnackBar(
+                            duration: const Duration(seconds: 1),
+                            content: WillPopScope(
+                              child: Text(content),
+                              onWillPop: () async {
+                                ScaffoldMessenger.of(context)
+                                    .removeCurrentSnackBar();
+
+                                return true;
+                              },
+                            ),
+                          );
+
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(
+                                sb,
+                              )
+                              .closed
+                              .then(
+                            (reason) {
+                              if (isSuccessful) {
+                                loginCallback();
+                                Navigator.popUntil(
+                                  context,
+                                  (route) => route.isFirst,
+                                );
+                              }
+                            },
+                          );
+                        }
                       }
                     },
                     child: Ink(
@@ -147,7 +214,47 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: Material(
                             color: Colors.transparent,
                             child: InkWell(
-                              onTap: () => print("hello"),
+                              onTap: () async {
+                                String content;
+                                bool isSuccessful = false;
+                                try {
+                                  UserCredential? userCredential =
+                                      await AuthService().signInWithGoogle();
+
+                                  print(userCredential);
+                                  content = "Success!";
+                                  isSuccessful = true;
+                                } catch (error) {
+                                  content =
+                                      "An unkown error has occurred. Please try again.";
+                                }
+                                if (context.mounted) {
+                                  SnackBar sb = SnackBar(
+                                    duration: const Duration(seconds: 1),
+                                    content: WillPopScope(
+                                      child: Text(content),
+                                      onWillPop: () async {
+                                        ScaffoldMessenger.of(context)
+                                            .removeCurrentSnackBar();
+
+                                        return true;
+                                      },
+                                    ),
+                                  );
+
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(sb)
+                                      .closed
+                                      .then((reason) {
+                                    if (isSuccessful) {
+                                      loginCallback();
+
+                                      Navigator.popUntil(
+                                          context, (route) => route.isFirst);
+                                    }
+                                  });
+                                }
+                              },
                               splashColor:
                                   Colors.deepPurple[100]!.withAlpha(200),
                             ),
@@ -164,8 +271,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       fixedSize: const Size(212, 50),
                       shape: buttonBorder,
                     ),
-                    onPressed: () =>
-                        Navigator.pushNamed(context, RegisterScreen.routeName),
+                    onPressed: () => Navigator.pushNamed(
+                        context, RegisterScreen.routeName,
+                        arguments: loginCallback),
                     icon: const Icon(Icons.email),
                     label: Text("Use your own Email",
                         style: formButtonTextStyle.copyWith(fontSize: 14)),

@@ -7,6 +7,7 @@ class GuideTitleCard extends StatelessWidget {
       this.linkTextStyle,
       this.description,
       this.margin = 6.0,
+      this.onTap,
       required this.linkLabel,
       required this.image});
 
@@ -17,6 +18,7 @@ class GuideTitleCard extends StatelessWidget {
   final TextStyle? titleTextStyle;
   final TextStyle? linkTextStyle;
   final ImageProvider<Object> image;
+  final void Function()? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +63,7 @@ class GuideTitleCard extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(100)),
                 child: InkWell(
-                  onTap: () => {print("hello")},
+                  onTap: onTap,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 10.0, vertical: 8),

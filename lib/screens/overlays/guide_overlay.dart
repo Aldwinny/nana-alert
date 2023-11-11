@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:nana_alert/screens/func/guide_list_screen.dart';
 import 'package:nana_alert/utils/helper.dart';
 import 'package:nana_alert/widgets/guide_title_card.dart';
 
@@ -33,6 +34,9 @@ class _GuideOverlayState extends State<GuideOverlay> {
                 linkLabel: "Learn More About Child Care Here >",
                 titleTextStyle: darkCardTitleStyle,
                 linkTextStyle: darkCardLabelStyle,
+                onTap: () => Navigator.pushNamed(
+                    context, GuideListScreen.routename,
+                    arguments: "childcare"),
                 image: Image.asset(
                   Helper.getAssetName("child-low.jpg", "images"),
                 ).image),
@@ -40,6 +44,9 @@ class _GuideOverlayState extends State<GuideOverlay> {
                 linkLabel: "Learn About First Aid For Children Here >",
                 titleTextStyle: darkCardTitleStyle,
                 linkTextStyle: darkCardLabelStyle,
+                onTap: () => Navigator.pushNamed(
+                    context, GuideListScreen.routename,
+                    arguments: "firstaid"),
                 image: Image.asset(
                   Helper.getAssetName("first-aid-low.jpg", "images"),
                 ).image),
@@ -52,14 +59,23 @@ class _GuideOverlayState extends State<GuideOverlay> {
                   GuideRowButton(
                     "Milk Tips",
                     assetName: Helper.getAssetName("milk.svg", "svg"),
+                    onTap: () => Navigator.pushNamed(
+                        context, GuideListScreen.routename,
+                        arguments: "milktips"),
                   ),
                   GuideRowButton(
                     "Guides",
                     assetName: Helper.getAssetName("bookmark.svg", "svg"),
+                    onTap: () => Navigator.pushNamed(
+                        context, GuideListScreen.routename,
+                        arguments: "guides"),
                   ),
                   GuideRowButton(
                     "Help Hotline",
                     assetName: Helper.getAssetName('emergency.svg', 'svg'),
+                    onTap: () => Navigator.pushNamed(
+                        context, GuideListScreen.routename,
+                        arguments: "emergencyhotline"),
                   ),
                 ],
               ),
@@ -76,10 +92,12 @@ class GuideRowButton extends StatelessWidget {
     this.title, {
     super.key,
     required this.assetName,
+    required this.onTap,
   });
 
   final String title;
   final String assetName;
+  final void Function() onTap;
 
   final TextStyle style = const TextStyle(
       color: Colors.white, fontWeight: FontWeight.w500, fontFamily: 'Poppins');
@@ -103,7 +121,7 @@ class GuideRowButton extends StatelessWidget {
           ),
         ),
         child: InkWell(
-          onTap: () => {},
+          onTap: onTap,
           child: Padding(
             padding:
                 const EdgeInsets.symmetric(vertical: 20.0, horizontal: 8.0),

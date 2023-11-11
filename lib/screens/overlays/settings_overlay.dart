@@ -1,7 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:nana_alert/screens/auth/login.dart';
+import 'package:nana_alert/screens/others/about.dart';
+import 'package:nana_alert/services/auth_service.dart';
 import 'package:nana_alert/shared/provider/settings_data.dart';
 import 'package:provider/provider.dart';
+import 'package:nana_alert/utils/helper.dart';
 
 class SettingsOverlay extends StatefulWidget {
   const SettingsOverlay({super.key, required this.rebuildCallback});
@@ -14,12 +18,19 @@ class SettingsOverlay extends StatefulWidget {
 
 class _SettingsOverlayState extends State<SettingsOverlay> {
   bool _isEmergencyCentered = false;
+  bool _isLoggedIn = false;
 
   /// This is the function that toggles the setting for "Center Emergency Button." It sends an update to the provider as well as the widget and its parent.
   void toggleIsEmergencyCentered() {
     Provider.of<SettingsData>(context, listen: false).toggleEmergencyCentered();
     setState(() {
       widget.rebuildCallback();
+    });
+  }
+
+  void checkLoggedInState() {
+    setState(() {
+      _isLoggedIn = true;
     });
   }
 
@@ -31,19 +42,36 @@ class _SettingsOverlayState extends State<SettingsOverlay> {
       child: SizedBox(
         width: MediaQuery.sizeOf(context).width,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: CircleAvatar(
-                radius: 70,
-                backgroundImage: Image.network(
-                  'https://i.pinimg.com/564x/56/c1/3d/56c13d61eb73d60d21cbb90784fdf9e7.jpg',
-                ).image,
-              ),
+            Container(
+              height: 200,
+              margin: EdgeInsets.only(bottom: 20),
+              decoration: BoxDecoration(
+                  image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: Image.asset(
+                        Helper.getAssetName(
+                            "mother-and-child-low.jpg", "images"),
+                      ).image)),
             ),
-            const Padding(
-              padding: EdgeInsets.only(bottom: 20.0),
-              child: Text('Hi!'),
+            Padding(
+              padding: EdgeInsets.all(17.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Nana Alert',
+                    style: TextStyle(
+                      fontFamily: "Poppins",
+                      fontWeight: FontWeight.bold,
+                      fontSize: 30,
+                      color: Colors.deepPurple[800],
+                    ),
+                  ),
+                  Text("Version 1.0.0")
+                ],
+              ),
             ),
             const Divider(),
             SettingListTile(
@@ -58,33 +86,34 @@ class _SettingsOverlayState extends State<SettingsOverlay> {
               ]),
             ),
             const Divider(),
+            if (!_isLoggedIn)
+              SettingListTile(
+                onTap: () {
+                  Navigator.pushNamed(context, LoginScreen.routeName,
+                      arguments: () => checkLoggedInState());
+                },
+                icon: const Icon(Icons.account_circle_outlined),
+                label: "Login / Register",
+              ),
             SettingListTile(
-              onTap: () {
-                Navigator.pushNamed(context, LoginScreen.routeName);
-              },
-              icon: const Icon(Icons.account_circle_outlined),
-              label: "Login / Register",
-            ),
-            SettingListTile(
-              onTap: () => {},
-              icon: const Icon(Icons.account_circle),
-              label: "Edit Personal Information",
-            ),
-            SettingListTile(
+              // REMOVE ALL RECORDS IN FIREBASE
               onTap: () => {},
               icon: const Icon(Icons.remove_circle_outline_sharp),
               label: "Reset Planner",
             ),
             SettingListTile(
-              onTap: () => {},
+              onTap: () => Navigator.pushNamed(context, AboutScreen.routename),
               icon: const Icon(Icons.cabin_rounded),
               label: "About the Developer",
             ),
-            SettingListTile(
-              onTap: () => {},
-              icon: const Icon(Icons.power_settings_new),
-              label: "Logout",
-            )
+            if (_isLoggedIn)
+              SettingListTile(
+                onTap: () => AuthService()
+                    .signOut()
+                    .then((_) => {print(FirebaseAuth.instance.currentUser)}),
+                icon: const Icon(Icons.power_settings_new),
+                label: "Logout",
+              )
           ],
         ),
       ),

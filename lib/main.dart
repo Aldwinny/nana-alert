@@ -1,6 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:nana_alert/screens/func/create_task_screen.dart';
+import 'package:nana_alert/screens/func/guide_item_screen.dart';
+import 'package:nana_alert/screens/func/guide_list_screen.dart';
 import 'package:nana_alert/shared/provider/settings_data.dart';
 import 'package:nana_alert/shared/provider/user_data.dart';
 import 'package:provider/provider.dart';
@@ -68,6 +71,11 @@ class _MyAppState extends State<MyApp> {
           HomeScreen.routeName: (context) => const HomeScreen(),
           GettingStartedScreen.routeName: (context) =>
               const GettingStartedScreen(),
+
+          // App Functionality
+          GuideListScreen.routename: (context) => const GuideListScreen(),
+          GuideItemScreen.routename: (context) => const GuideItemScreen(),
+          CreateTaskScreen.routeName: (context) => const CreateTaskScreen(),
 
           // Auth
           LoginScreen.routeName: (context) => const LoginScreen(),

@@ -34,19 +34,21 @@ class _SplashScreenState extends State<SplashScreen> {
       body: SizedBox(
         width: Helper.getScreenWidth(context),
         height: Helper.getScreenHeight(context),
-        child: const Stack(children: [
-          Align(
-            alignment: Alignment.center,
-            child: Text(
-              'I BILIB IN U!',
-              style: TextStyle(
-                fontFamily: 'Cubao',
-                fontSize: 60,
-                color: Colors.white,
+        child: const Stack(
+          children: [
+            Align(
+              alignment: Alignment.center,
+              child: Text(
+                'Nana Alert',
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize: 60,
+                  color: Colors.white,
+                ),
               ),
-            ),
-          )
-        ]),
+            )
+          ],
+        ),
       ),
     );
   }

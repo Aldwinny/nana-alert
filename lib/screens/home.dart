@@ -4,6 +4,7 @@ import 'package:nana_alert/screens/overlays/planner_overlay.dart';
 import 'package:nana_alert/screens/overlays/settings_overlay.dart';
 import 'package:nana_alert/shared/provider/settings_data.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, this.activeScreen});
@@ -89,18 +90,42 @@ class _HomeScreenState extends State<HomeScreen> {
     );
 
     return Scaffold(
+        extendBody: true,
         backgroundColor:
             // _active == 0 || _active == 1 ? Colors.blue[800] :
-            Colors.deepPurple[50],
-        appBar: _active == 2
-            ? PreferredSize(
-                preferredSize: const Size.fromHeight(30),
-                child: appBar,
-              )
-            : appBar,
+            _active != 1 ? Colors.deepPurple[50] : Colors.deepPurple[800],
+        appBar: _active == 0 ? appBar : null,
         body: _overlays[_active],
         floatingActionButton: FloatingActionButton(
-            onPressed: () => {},
+            onPressed: () {
+              showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                        title: const Text("Call 911?"),
+                        content: const Text(
+                            "Clicking on continue will call the National Emergency Hotline."),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              _makeEmergencyCall().catchError((err) => {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => const AlertDialog(
+                                        title: Text("Failed to Call.."),
+                                        content: Text("An error has occurred."),
+                                      ),
+                                    ),
+                                  });
+                            },
+                            child: const Text("Continue"),
+                          ),
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text("Cancel"),
+                          ),
+                        ],
+                      ));
+            },
             shape: const CircleBorder(),
             child: const Icon(Icons.warning_amber_sharp, color: Colors.black)),
         floatingActionButtonLocation: fabLocation,
@@ -143,6 +168,12 @@ class _HomeScreenState extends State<HomeScreen> {
             if (!_isEmergencyCentered) const Spacer(),
           ]),
         ));
+  }
+
+  Future<void> _makeEmergencyCall() async {
+    const url = 'tel:911';
+
+    await launchUrlString(url);
   }
 }
 

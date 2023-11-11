@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:nana_alert/services/auth_service.dart';
 import 'package:nana_alert/utils/helper.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -13,6 +15,10 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
   final formButtonTextStyle =
       const TextStyle(fontFamily: "Poppins", fontSize: 15);
@@ -23,6 +29,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loginCallback =
+        ModalRoute.of(context)!.settings.arguments as void Function();
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -52,16 +61,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                 ),
                 TextFormField(
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Please enter your email";
-                    } else {
-                      return null;
-                    }
-                  },
-                  decoration: const InputDecoration(labelText: "Username"),
-                ),
-                TextFormField(
+                  controller: _emailController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return "Please enter your email";
@@ -72,8 +72,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   decoration: const InputDecoration(labelText: "Email"),
                 ),
                 TextFormField(
+                  controller: _passwordController,
                   validator: (value) {
-                    if (value == null || value.isEmpty) {
+                    if (value == null ||
+                        value.isEmpty ||
+                        !Helper.isValidPassword(_passwordController.text)) {
                       return "Please enter your password";
                     } else {
                       return null;
@@ -85,9 +88,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   decoration: const InputDecoration(labelText: "Password"),
                 ),
                 TextFormField(
+                  controller: _confirmPasswordController,
                   validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Incorrect Password!";
+                    if (value == null ||
+                        value.isEmpty ||
+                        !Helper.isValidPassword(
+                            _confirmPasswordController.text) ||
+                        _confirmPasswordController.text !=
+                            _passwordController.text) {
+                      return "Password does not match!";
                     } else {
                       return null;
                     }
@@ -98,7 +107,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   decoration:
                       const InputDecoration(labelText: "Confirm Password"),
                 ),
-                Align(
+                const Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
                     "*password must be 8+ characters\n*at least one number\n*one uppercase letter\n*one lowercase letter",
@@ -108,13 +117,63 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: InkWell(
-                    onTap: () {
+                    onTap: () async {
                       if (_formKey.currentState!.validate()) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Processing Data'),
-                          ),
-                        );
+                        String content;
+                        bool isSuccessful = true;
+
+                        try {
+                          UserCredential? userCredential = await AuthService()
+                              .createAccountWithEmail(_emailController.text,
+                                  _passwordController.text);
+                          content = "Success!";
+                        } on FirebaseAuthException catch (error) {
+                          switch (error.code) {
+                            case "EMAIL-ALREADY-IN-USE":
+                              content =
+                                  "Your email is already in use by another account.";
+                              break;
+                            case "INVALID-EMAIL":
+                              content = "Your email is invalid.";
+                              break;
+                            case "WEAK-PASSWORD":
+                              content = "Your password is weak.";
+                              break;
+                            default:
+                              content = "An unknown error has occurred";
+                              break;
+                          }
+                          isSuccessful = false;
+                        } catch (otherError) {
+                          print("GENERIC ERROR: $otherError");
+                          content = "An unknown error has occurred";
+                          isSuccessful = false;
+                        }
+                        if (context.mounted) {
+                          SnackBar sb = SnackBar(
+                            duration: const Duration(seconds: 1),
+                            content: WillPopScope(
+                              child: Text(content),
+                              onWillPop: () async {
+                                ScaffoldMessenger.of(context)
+                                    .removeCurrentSnackBar();
+
+                                return true;
+                              },
+                            ),
+                          );
+
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(sb)
+                              .closed
+                              .then((reason) {
+                            if (isSuccessful) {
+                              loginCallback();
+                              Navigator.popUntil(
+                                  context, (route) => route.isFirst);
+                            }
+                          });
+                        }
                       }
                     },
                     child: Ink(
