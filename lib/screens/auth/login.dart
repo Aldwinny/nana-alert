@@ -58,12 +58,14 @@ class _LoginScreenState extends State<LoginScreen> {
             key: _formKey,
             child: Column(
               children: <Widget>[
-                const Padding(
-                  padding:
-                      EdgeInsets.symmetric(vertical: 40.0, horizontal: 50.0),
-                  child: Placeholder(
-                    fallbackHeight: 100,
-                  ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 40.0, horizontal: 50.0),
+                  child: Text("Nana Alert",
+                      style: TextStyle(
+                          fontFamily: "Poppins",
+                          fontSize: 30,
+                          color: Colors.deepPurple[800])),
                 ),
                 TextFormField(
                   controller: _emailController,
