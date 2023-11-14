@@ -147,7 +147,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           }
                           isSuccessful = false;
                         } catch (otherError) {
-                          print("GENERIC ERROR: $otherError");
+                          // print("GENERIC ERROR: $otherError");
                           content = "An unknown error has occurred";
                           isSuccessful = false;
                         }
@@ -228,7 +228,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           child: Material(
                             color: Colors.transparent,
                             child: InkWell(
-                              onTap: () => print("hello"),
+                              // onTap: () => print("hello"),
                               splashColor:
                                   Colors.deepPurple[100]!.withAlpha(200),
                             ),

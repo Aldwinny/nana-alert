@@ -1,16 +1,21 @@
-# nana_alert
+# Nana Alert
 
-A new Flutter project.
+> A Flutter & Firebase mobile guide application for teaching nannies and babysitters. It also has a todo list for daily tasks.
 
-## Getting Started
+## Author
 
-This project is a starting point for a Flutter application.
+I'm Aldwin Dennis Reyes, an aspiring mobile developer. Check me out on my website [here!](https://aldwinny.github.io)
 
-A few resources to get you started if this is your first Flutter project:
+## Technologies
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Primarily built with Flutter and Firebase, this mobile application also uses a variety of packages through pub.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- Firebase Core
+- Firebase Auth
+- Firebase Auth Google SSO
+- Firebase Firestore
+- Provider
+
+## Running
+
+After resolving missing files, and installing pub packages, calling <code>flutter run</code> in the terminal.
