@@ -6,6 +6,8 @@
 
 I'm Aldwin Dennis Reyes, an aspiring mobile developer. Check me out on my website [here!](https://aldwinny.github.io)
 
+This Mobile Application is built as a requirement in the completion of our course Mobile Development Integration.
+
 ## 💻 Technologies
 
 Primarily built with Flutter and Firebase, this mobile application also uses a variety of packages through pub.
