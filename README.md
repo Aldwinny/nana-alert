@@ -1,12 +1,12 @@
-# Nana Alert
+# <img src="https://drive.google.com/uc?id=1HioQItuqx9IEasGNdwUvbAKpHDskZ7yp" height="25" /> Nana Alert
 
 > A Flutter & Firebase mobile guide application for teaching nannies and babysitters. It also has a todo list for daily tasks.
 
-## Author
+## ✏️ Author
 
 I'm Aldwin Dennis Reyes, an aspiring mobile developer. Check me out on my website [here!](https://aldwinny.github.io)
 
-## Technologies
+## 💻 Technologies
 
 Primarily built with Flutter and Firebase, this mobile application also uses a variety of packages through pub.
 
@@ -16,6 +16,6 @@ Primarily built with Flutter and Firebase, this mobile application also uses a v
 - Firebase Firestore
 - Provider
 
-## Running
+## 🔨 Running
 
 After resolving missing files, and installing pub packages, calling <code>flutter run</code> in the terminal.
